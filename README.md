@@ -1,92 +1,85 @@
-# 00_03 Working With YAML Files
+# 00_04 Your First Action
 
-Workflows used with GitHub Actions are coded in YAML format.
+In this lesson, you'll create and run your very first GitHub Actions workflow.
 
-1. **What is YAML?**
+This example will introduce you to the GitHub Actions interface and demonstrate how a workflow is triggered by a push event. You'll start with a predefined example, make a few adjustments, and then execute a job that prints "Hello World" — the traditional start for any new project.
 
-   - YAML = “YAML Ain’t Markup Language” (recursive acronym).
-   - Not a markup language — it's used for data serialization.
+By the end of this lesson, you’ll understand how to create a workflow file, customize the workflow contents, commit the workflow file to the repository, and verify that the workflow runs as expected.
 
-2. **Purpose of YAML in GitHub Actions**
+## Overview
 
-   - Defines workflows and actions by describing their attributes.
-   - Serialization = structured, readable format for both humans and machines.
+You’ll complete the following steps to run your first GitHub Action:
 
-3. **YAML File Extensions**
+1. Use a template to create a workflow.
+1. Rename the workflow file and the workflow name.
+1. Commit the workflow to trigger the action.
+1. View the results of the job execution.
 
-   - Common extensions: `.yml` and `.yaml`
-   - Both are valid for GitHub workflows.
+Use the following file for reference:
 
-4. **Formatting Rules**
+- [hello.yml](./hello.yml)
 
-   - Relies on **indentation**, **colons**, **dashes**, etc.
-   - Proper formatting is crucial (YAML is whitespace-sensitive).
+## Instructions
 
-5. **Recommended Editors**
+1. Open the Actions Tab
 
-   - Many modern code editors support YAML formatting including but not limited to:
+    - Navigate to your newly created GitHub repository.
+    - Select the **Actions** tab at the top of the page.
 
-      - [**Neovim**](https://neovim.io/)
-      - [**Visual Studio Code**](https://code.visualstudio.com/)
-      - [**GitHub’s web editor**](https://docs.github.com/en/codespaces/the-githubdev-web-based-editor).
+1. Configure a Simple Workflow
 
-   - These and other tools help manage indentation and catch formatting errors.
+    - On the Actions page, you’ll see sample workflows provided by GitHub.
+    - Find the **Simple Workflow** example and select the **Configure** button.
 
-## Whitespace and Other Considerations
+1. Rename the Workflow File
 
-- **Leading/Trailing Whitespace:** Should be handled carefully as YAML is sensitive to indentation. It's best practice to avoid them or use quotes to explicitly preserve them.
-- **Tabs:** YAML considers tab characters as illegal for indentation. You must use spaces instead.
-- **Unicode Control Characters:** Are explicitly excluded in YAML streams for readability.
-- **"Yes" and "No":** Should be quoted if intended as literal strings, otherwise, they may be interpreted as the boolean values `True` and `False`.
-- **Numbers:** If a string starts with a number but should be a string (e.g., a version number), it should be quoted.
+    - At the top of the editor, GitHub names the file `blank.yml` by default.
+    - Rename the file to `hello.yml`.
 
-## Characters with Special Meaning in YAML
+1. Collapse the Help Panel
 
-YAML uses several characters for its syntax and structuring data. These characters are considered restricted or special and require careful handling to avoid syntax errors.
+    - To focus on the editor, collapse the help panel by selecting the icon on the right side of the screen.
 
-Here are some of the most common restricted characters and how they are used:
+1. Rename the Workflow
 
-| Character | Name | Description |
-| --------- | --- | --- |
-| `#`       | Hash/Pound Sign | Starts a comment, ignoring the rest of the line. |
-| `:`       | Colon | Separates keys from values in key-value pairs. |
-| `-`       | Dash/Hyphen | Indicates an item in a sequence (list or array). |
-| `[ ]`     | Square Brackets | Enclose sequences or arrays. |
-| `\|`      | Pipe | Indicates a literal block style for multi-line strings, preserving newlines. |
-| `>`       | Greater Than Sign | Indicates a folded block style for multi-line strings, converting newlines to spaces. |
-| `!`       | Exclamation Mark | Specifies custom data types (tags). |
-| `\`       | Backslash | Used for escape sequences in double-quoted strings, like `\n` for a newline or `\"` for a double quote. |
-| `?`       | Question Mark | Used in complex keys, often to indicate the beginning of a mapping key in some contexts. |
-| `{ }`     | Curly Braces | Indicate inline mappings (objects). |
-| `&`       | Ampersand | Creates an anchor, marking a position for reuse. |
-| `*`       | Asterisk | References an anchor (alias). |
+    - In the editor, find the line that reads `name: CI`.
+    - Change the name to `hello`.
 
-In addition to these, other characters can also be considered special depending on their context or location within a string. These include: `<`, `>`, `=`, `%`, `@`, `/`, `` ` ``
+1. Review the Workflow Configuration.
 
-## Handling Special Characters in YAML
+    Take note of the following:
 
-When these characters are part of a string value, especially at the beginning of a string, or within key names, they can be misinterpreted by the YAML parser, causing syntax errors. To avoid this, it's crucial to handle these characters correctly.
+    - The workflow defines a job named `build`.
+    - The job specifies a runner platform (`ubuntu-latest`).
+    - Under `steps`, the job includes two script steps that print "Hello World".
 
-### Use Quotes
+1. Commit the Workflow File
 
-The most common way to handle special characters is to enclose the string containing them in quotes.
+    - Select the green **Commit changes** button.
+    - On the confirmation dialog, select **Commit changes** again.
+    - This writes the file to your repository and triggers a push event.
 
-- **Double Quotes (`"`):** Allow the use of escape sequences like `\n` for a newline, `\\` for a backslash, and `\"` to include a double quote within the string.
-- **Single Quotes (`'`):** Treat all characters literally, meaning escape sequences are not interpreted, according to Educative. To include a single quote within a single-quoted string, you use two consecutive single quotes (`''`).
+1. View the Workflow Run
 
-**For example:**
+    - Select the **Actions** tab again.
+    - You should now see a new entry for your `hello` workflow.
+    - Wait for the workflow to complete. You may need to refresh the page.
+    - Look for the green check mark indicating success.
 
-```yaml
-message: "This string contains a colon: and a quote\"."
-another_message: 'This string contains a single quote: ''Hello''.'
-```
+1. Inspect the Workflow Details
 
-### Validate YAML Files
+    - Select the `Create hello.yml` entry next to the green check mark.
+    - On the next screen, you'll see the `build` job listed.
+    - Select the **build** job to view the steps it executed.
 
-- Validate your YAML files with a linter or parser to catch potential errors before deployment.
-- Use a modern editor that reports errors in YAML files
+1. Expand and Verify the Output
+
+    - Expand the steps labeled:
+        - `Run a one-line script`
+        - `Run a multi-line script`
+    - Review the output from each step.
 
 <!-- FooterStart -->
 ---
-[← 00_02 What You Should Know](../00_02_what_you_should_know/README.md) | [00_04 Your First Action →](../00_04_your_first_action/README.md)
+[← 00_03 Working With YAML Files](../00_03_working_with_yaml_files/README.md) | [00_05 Workflow and Action Attributes →](../00_05_workflow_action_attributes/README.md)
 <!-- FooterEnd -->
