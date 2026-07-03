@@ -1,85 +1,125 @@
-# 00_04 Your First Action
+# 00_05 Workflow and Action Attributes
 
-In this lesson, you'll create and run your very first GitHub Actions workflow.
+Before you begin building your own custom workflows and actions in GitHub Actions, it's helpful to understand the key attributes that define how workflows behave.
 
-This example will introduce you to the GitHub Actions interface and demonstrate how a workflow is triggered by a push event. You'll start with a predefined example, make a few adjustments, and then execute a job that prints "Hello World" — the traditional start for any new project.
+This lesson summarizes the most common attributes used in a GitHub Actions workflow.
 
-By the end of this lesson, you’ll understand how to create a workflow file, customize the workflow contents, commit the workflow file to the repository, and verify that the workflow runs as expected.
+## References
 
-## Overview
+- [Workflow Syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
+- [Workflow Contexts](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts)
+- [GitHub Actions Cheat Sheet](../../github-actions-cheat-sheet.pdf)
 
-You’ll complete the following steps to run your first GitHub Action:
+## Example Workflow
 
-1. Use a template to create a workflow.
-1. Rename the workflow file and the workflow name.
-1. Commit the workflow to trigger the action.
-1. View the results of the job execution.
-
-Use the following file for reference:
+Use the following workflow as an example for the attribute reference.
 
 - [hello.yml](./hello.yml)
 
-## Instructions
+```yaml
+name: Hello
 
-1. Open the Actions Tab
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+  pull_request:
 
-    - Navigate to your newly created GitHub repository.
-    - Select the **Actions** tab at the top of the page.
+# A workflow run is made up of one or more jobs
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
-1. Configure a Simple Workflow
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
 
-    - On the Actions page, you’ll see sample workflows provided by GitHub.
-    - Find the **Simple Workflow** example and select the **Configure** button.
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
 
-1. Rename the Workflow File
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+```
 
-    - At the top of the editor, GitHub names the file `blank.yml` by default.
-    - Rename the file to `hello.yml`.
+## Attribute Reference
 
-1. Collapse the Help Panel
+### `name` (Workflow-level)
 
-    - To focus on the editor, collapse the help panel by selecting the icon on the right side of the screen.
+- **Purpose**: Gives a human-readable name to the workflow.
+- **Best Practice**: Use descriptive names, especially when managing multiple workflows in one repo.
+- **Optional**: If omitted, GitHub will default to using the file path and filename as the workflow name.
 
-1. Rename the Workflow
+### `on`
 
-    - In the editor, find the line that reads `name: CI`.
-    - Change the name to `hello`.
+- **Purpose**: Specifies the event(s) that trigger the workflow.
+- **Required**: Yes. Without it, the workflow will not run.
+- **Examples of Events**:
+  - `push`, `pull_request`, `release`
+  - Webhook events like `issues`, `create`, `delete`, `member`
+  - Scheduled events using `schedule` with `cron` syntax
 
-1. Review the Workflow Configuration.
+### `jobs`
 
-    Take note of the following:
+- **Purpose**: Defines jobs in the workflow.
+- **Required**: Yes. At least one job must be defined.
+- **Format**: Each job is an identifier you choose, and must:
+  - Start with a letter or underscore
+  - Contain only alphanumeric characters, dashes, or underscores
 
-    - The workflow defines a job named `build`.
-    - The job specifies a runner platform (`ubuntu-latest`).
-    - Under `steps`, the job includes two script steps that print "Hello World".
+### `runs-on`
 
-1. Commit the Workflow File
+- **Purpose**: Specifies the type of virtual machine (runner) the job will run on.
+- **Common GitHub-hosted runners**:
+  - `ubuntu-latest`
+  - `windows-latest`
+  - `macos-latest`
 
-    - Select the green **Commit changes** button.
-    - On the confirmation dialog, select **Commit changes** again.
-    - This writes the file to your repository and triggers a push event.
+Use the following links for more information on GitHub hosted runners:
 
-1. View the Workflow Run
+- **[Available Images](https://github.com/actions/runner-images?tab=readme-ov-file#available-images)**
+- **Installed Software**
+  - [Windows](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md)
+  - [Ubuntu (Linux)](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#installed-software)
+  - [macOS](https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md)
 
-    - Select the **Actions** tab again.
-    - You should now see a new entry for your `hello` workflow.
-    - Wait for the workflow to complete. You may need to refresh the page.
-    - Look for the green check mark indicating success.
+### `steps`
 
-1. Inspect the Workflow Details
+- **Purpose**: A sequence of tasks within a job.
+- **Details**:
+  - Can be either actions (`uses`) or shell commands (`run`)
+  - Each step runs in its own process
+  - Steps share the same virtual environment and filesystem
 
-    - Select the `Create hello.yml` entry next to the green check mark.
-    - On the next screen, you'll see the `build` job listed.
-    - Select the **build** job to view the steps it executed.
+### `uses`
 
-1. Expand and Verify the Output
+- **Purpose**: Indicates an Action to use in a step.
+- **Format**:
+  - From same repo: `./path-to-action`
+  - From another public repo: `owner/repo@ref`
+  - From a container registry: `docker://image`
 
-    - Expand the steps labeled:
-        - `Run a one-line script`
-        - `Run a multi-line script`
-    - Review the output from each step.
+### `run`
+
+- **Purpose**: Executes shell commands directly in the runner's environment.
+- **Use Case**: When you want to perform tasks using commands like `npm install`, `echo`, `python script.py`, etc.
+
+### `name` (Step-level)
+
+- **Purpose**: Gives a distinct label to a step.
+- **Optional**: If omitted, the step will default to the command or Action string as the display name.
+
+## Next Steps
+
+Now that you’ve reviewed the core attributes of a GitHub Actions workflow, you're ready to begin developing your own custom workflows. Refer to this guide as you build, experiment, and troubleshoot.
 
 <!-- FooterStart -->
 ---
-[← 00_03 Working With YAML Files](../00_03_working_with_yaml_files/README.md) | [00_05 Workflow and Action Attributes →](../00_05_workflow_action_attributes/README.md)
+[← 00_04 Your First Action](../00_04_your_first_action/README.md) | [01_01 Create a Workflow →](../../ch1_actions_and_workflows/01_01_create_a_workflow/README.md)
 <!-- FooterEnd -->
